@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.freudian.dao.AreaMapper">
+
+    <resultMap type="area" id="areaResult">
+        <id column="areaID" jdbcType="INTEGER" property="areaID" />
+        <result column="areaName" jdbcType="VARCHAR" property="areaName" />
+        <result column="areaLevel" jdbcType="INTEGER" property="areaLevel" />
+        <result column="areaCode" jdbcType="INTEGER" property="areaCode" />
+        <result column="parentCode" jdbcType="INTEGER" property="parentCode" />
+        <result column="createDate" property="createDate" />
+        <result column="changeDate" property="changeDate" />
+    </resultMap>
+
+    <resultMap type="area" id="areaCascadeResult" extends="areaResult">
+        <collection property="childAreas" ofType="area">
+            <id column="cAreaID" jdbcType="INTEGER" property="areaID" />
+            <result column="cAreaName" jdbcType="VARCHAR" property="areaName" />
+            <result column="cAreaLevel" jdbcType="INTEGER" property="areaLevel" />
+            <result column="cAreaCode" jdbcType="INTEGER" property="areaCode" />
+            <result column="cParentCode" jdbcType="INTEGER" property="parentCode" />
+            <collection property="childAreas" ofType="area">
+                <id column="dAreaID" jdbcType="INTEGER" property="areaID" />
+                <result column="dAreaName" jdbcType="VARCHAR" property="areaName" />
+                <result column="dAreaLevel" jdbcType="INTEGER" property="areaLevel" />
+                <result column="dAreaCode" jdbcType="INTEGER" property="areaCode" />
+                <result column="dParentCode" jdbcType="INTEGER" property="parentCode" />
+            </collection>
+        </collection>
+    </resultMap>
+
+    <insert id="insertAllArea"  parameterType="java.util.List" >
+        insert into com_area (areaID, areaName, areaLevel, areaCode, parentCode, createDate, changeDate)
+        values
+        <foreach collection ="areaList" item="area" index= "index" separator ="," close=";">
+            (#{area.areaID,jdbcType=INTEGER}, #{area.areaName,jdbcType=VARCHAR}, #{area.areaLevel,jdbcType=INTEGER},
+            #{area.areaCode,jdbcType=INTEGER}, #{area.parentCode,jdbcType=INTEGER},
+            #{area.createDate}, #{area.changeDate})
+        </foreach>
+    </insert>
+
+
+    <select id="selectAreaCascadeChildrenByAreaName" resultMap="areaCascadeResult" parameterType="java.lang.String">
+        select a1.areaID, a1.areaName, a1.areaLevel, a1.areaCode, a1.parentCode
+        , a2.areaID cAreaID, a2.areaName cAreaName, a2.areaLevel cAreaLevel, a2.areaCode cAreaCode, a2.parentCode cParentCode
+        , a3.areaID dAreaID, a3.areaName dAreaName, a3.areaLevel dAreaLevel, a3.areaCode dAreaCode, a3.parentCode dParentCode
+        from  com_area a1
+        left join com_area a2 on a2.parentCode = a1.areaCode
+        left join com_area a3 on a3.parentCode = a2.areaCode
+        where a1.areaName = #{areaName}
+    </select>
+
+
+    
+</mapper>

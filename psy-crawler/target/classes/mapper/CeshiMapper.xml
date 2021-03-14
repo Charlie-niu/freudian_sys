@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.freudian.dao.CeshiMapper">
+
+    <resultMap type="ceshi" id="ceshiResult">
+        <id column="ceshiID" jdbcType="INTEGER" property="ceshiID" />
+        <result column="ceshiName" jdbcType="VARCHAR" property="ceshiName" />
+        <result column="ceshiTypeID" jdbcType="VARCHAR" property="ceshiTypeID" />
+        <result column="ceshiImgURL" jdbcType="VARCHAR" property="ceshiImgURL" />
+        <result column="ceshiDesc" jdbcType="VARCHAR" property="ceshiDesc" />
+        <result column="ceshiPrice" jdbcType="VARCHAR" property="ceshiPrice" />
+        <result column="ceshiEstimatedTime" jdbcType="VARCHAR" property="ceshiEstimatedTime" />
+        <result column="viewAmount" jdbcType="INTEGER" property="viewAmount" />
+        <result column="questionAmount" jdbcType="INTEGER" property="questionAmount" />
+        <result column="createDate" property="createDate" />
+        <result column="changeDate" property="changeDate" />
+    </resultMap>
+
+    <resultMap type="ceshi" id="ceshiResultWithQuestion" extends="ceshiResult">
+        <collection property="questions" ofType="Questions"
+                    resultMap="com.freudian.dao.QuestionMapper.questionResult" />
+    </resultMap>
+
+    <insert id="insertCeshi"  parameterType="ceshi" >
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="ceshiID">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into psy_ceshi (ceshiID, ceshiName, ceshiTypeID, ceshiImgURL, ceshiDesc, ceshiPrice,
+                    ceshiEstimatedTime, viewAmount, questionAmount, createDate, changeDate)
+        values (#{ceshiID,jdbcType=INTEGER}, #{ceshiName,jdbcType=VARCHAR}, #{ceshiTypeID,jdbcType=INTEGER},
+            #{ceshiImgURL,jdbcType=VARCHAR}, #{ceshiDesc,jdbcType=VARCHAR}, #{ceshiPrice,jdbcType=VARCHAR},
+            #{ceshiEstimatedTime,jdbcType=VARCHAR}, #{viewAmount,jdbcType=VARCHAR}, #{questionAmount,jdbcType=VARCHAR},
+            #{createDate}, #{changeDate})
+    </insert>
+
+    <select id="selectAllCeshi" resultMap="ceshiResult">
+        select ceshiID, ceshiName, ceshiTypeID, ceshiImgURL, ceshiDesc, ceshiPrice,
+               ceshiEstimatedTime, viewAmount, questionAmount, createDate, changeDate
+        from psy_ceshi
+        order by ceshiID asc
+    </select>
+</mapper>

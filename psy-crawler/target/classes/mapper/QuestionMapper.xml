@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.freudian.dao.QuestionMapper">
+
+    <resultMap type="question" id="questionResult">
+        <id column="questionID" jdbcType="INTEGER" property="questionID" />
+        <result column="questionName" jdbcType="VARCHAR" property="questionName" />
+        <result column="ceshiID" jdbcType="INTEGER" property="ceshiID" />
+        <result column="createDate" property="createDate" />
+        <result column="changeDate" property="changeDate" />
+    </resultMap>
+
+    <resultMap type="question" id="questionResultWithQuestionChoices" extends="questionResult">
+        <collection property="questionChoices" ofType="QuestionChoices"
+                    resultMap="com.freudian.dao.QuestionChoiceMapper.questionChoiceResult" />
+    </resultMap>
+
+
+    <insert id="insertQuestion"  parameterType="question">
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="questionID">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into psy_question (questionID, questionName, ceshiID, createDate, changeDate)
+        values (#{questionID,jdbcType=INTEGER}, #{questionName,jdbcType=VARCHAR},
+                #{ceshiID,jdbcType=INTEGER}, #{createDate}, #{changeDate})
+	</insert>
+
+    <insert id="insertQQChoice">
+        insert into psy_question_questionchoice (questionID, questionChoiceID, createDate, changeDate)
+        values (#{questionID,jdbcType=INTEGER}, #{questionChoiceID,jdbcType=VARCHAR}, #{createDate}, #{changeDate})
+	</insert>
+
+    <select id="selectAllQuestionCascadeQuestionChoice" resultMap="questionResultWithQuestionChoices">
+        select q.questionID, q.questionName,q.ceshiID, q.createDate, q.changeDate,
+            qc.questionChoiceID, qc.questionChoiceName, qc.questionChoiceValue, qc.createDate, qc.changeDate
+        from psy_question q
+        left join psy_question_questionchoice qqc on q.questionID = qqc.questionID
+        left join psy_questionchoice qc on qqc.questionChoiceID = qc.questionChoiceID
+        order by q.questionID asc
+    </select>
+</mapper>

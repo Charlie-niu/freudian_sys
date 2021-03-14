@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.freudian.dao.DoctorMapper">
+
+    <resultMap id="doctorResult" type="doctor">
+        <id column="doctorID" jdbcType="INTEGER" property="doctorID" />
+        <result column="doctorName" jdbcType="VARCHAR" property="doctorName" />
+        <result column="phoneNumber" jdbcType="VARCHAR" property="phoneNumber" />
+        <result column="doctorImgURL" jdbcType="VARCHAR" property="doctorImgURL" />
+        <result column="gender" jdbcType="VARCHAR" property="gender" />
+        <result column="age" jdbcType="VARCHAR" property="age" />
+        <result column="levelText" jdbcType="VARCHAR" property="levelText" />
+        <result column="levelID" jdbcType="VARCHAR" property="levelID" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+<!--        <result column="areaList" jdbcType="VARCHAR" property="areaList" -->
+<!--                typeHandler="com.freudian.utils.AreaListTypeHandler" />-->
+<!--        <result column="specialtyList" jdbcType="VARCHAR" property="specialtyList" -->
+<!--                typeHandler="com.freudian.utils.SpecialtyListTypeHandler" />-->
+        <result column="createDate" property="createDate" />
+        <result column="changeDate" property="changeDate" />
+    </resultMap>
+
+    <insert id="insertAllDoctor" parameterType="java.util.List" >
+        insert into psy_doctor (doctorID, doctorName, phoneNumber, doctorImgURL, gender, age, levelText, levelID, description, areaList, specialtyList, createDate, changeDate)
+        values
+        <foreach collection ="doctorList" item="doctor" index= "index" separator ="," close=";">
+            (#{doctor.doctorID,jdbcType=INTEGER}, #{doctor.doctorName,jdbcType=VARCHAR}, #{doctor.phoneNumber,jdbcType=VARCHAR},
+            #{doctor.doctorImgURL,jdbcType=VARCHAR}, #{doctor.gender,jdbcType=VARCHAR}, #{doctor.age,jdbcType=VARCHAR},
+            #{doctor.levelText,jdbcType=VARCHAR}, #{doctor.levelID,jdbcType=VARCHAR}, #{doctor.description,jdbcType=VARCHAR},
+            #{doctor.areaList,typeHandler=com.freudian.utils.AreaListTypeHandler},
+            #{doctor.specialtyList,typeHandler=com.freudian.utils.SpecialtyListTypeHandler},
+            #{doctor.createDate}, #{doctor.changeDate})
+        </foreach>
+    </insert>
+
+
+
+
+
+
+<!--            #{doctor.areaList,typeHandler=com.freudian.utils.AreaListTypeHandler},
+            #{doctor.specialtyList,typeHandler=com.freudian.utils.SpecialtyListTypeHandler},
+            -->
+
+</mapper>

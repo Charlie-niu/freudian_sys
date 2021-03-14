@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.freudian.dao.QuestionChoiceMapper">
+
+    <resultMap type="questionChoice" id="questionChoiceResult">
+        <id column="questionChoiceID" jdbcType="INTEGER" property="questionChoiceID" />
+        <result column="questionChoiceName" jdbcType="VARCHAR" property="questionChoiceName" />
+        <result column="questionChoiceValue" jdbcType="INTEGER" property="questionChoiceValue" />
+        <result column="createDate" property="createDate" />
+        <result column="changeDate" property="changeDate" />
+    </resultMap>
+
+    <insert id="insertQuestionChoice"  parameterType="questionChoice" >
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="questionChoiceID">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into psy_questionchoice (questionChoiceID, questionChoiceName,
+                    questionChoiceValue, createDate, changeDate)
+        values (#{questionChoiceID,jdbcType=INTEGER}, #{questionChoiceName,jdbcType=VARCHAR},
+                #{questionChoiceValue,jdbcType=VARCHAR}, #{createDate}, #{changeDate})
+	</insert>
+
+
+    <select id="selectQuestionChoiceByValue" parameterType="questionChoice" resultType="questionChoice">
+       select questionChoiceID, questionChoiceName, questionChoiceValue, createDate, changeDate
+       from psy_questionchoice
+       where questionChoiceName = #{questionChoiceName,jdbcType=VARCHAR}
+        and questionChoiceValue = #{questionChoiceValue,jdbcType=VARCHAR}
+       order by questionChoiceID asc
+    </select>
+
+    <select id="selectAllQuestionChoices" resultType="questionChoice">
+       select questionChoiceID, questionChoiceName, questionChoiceValue, createDate, changeDate
+       from psy_questionchoice
+       order by questionChoiceID asc
+    </select>
+</mapper>

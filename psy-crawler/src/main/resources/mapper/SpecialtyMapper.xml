@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.freudian.dao.SpecialtyMapper">
+    <resultMap type="specialty" id="specialtyResult">
+        <id column="specialtyID" jdbcType="INTEGER" property="specialtyID" />
+        <result column="specialtyName" jdbcType="VARCHAR" property="specialtyName" />
+        <result column="specialtyLevel" jdbcType="INTEGER" property="specialtyLevel" />
+        <result column="specialtyCode" jdbcType="INTEGER" property="specialtyCode" />
+        <result column="parentCode" jdbcType="INTEGER" property="parentCode" />
+        <result column="createDate" property="createDate" />
+        <result column="changeDate" property="changeDate" />
+    </resultMap>
+
+    <insert id="insertAllSpecialty"  parameterType="java.util.List" >
+        insert into psy_specialty (specialtyID, specialtyName, specialtyLevel, specialtyCode, parentCode, createDate, changeDate)
+        values
+        <foreach collection ="specialtyList" item="specialty" index= "index" separator ="," close=";">
+            (#{specialty.specialtyID,jdbcType=INTEGER}, #{specialty.specialtyName,jdbcType=VARCHAR}, #{specialty.specialtyLevel,jdbcType=INTEGER},
+            #{specialty.specialtyCode,jdbcType=INTEGER}, #{specialty.parentCode,jdbcType=INTEGER},
+            #{specialty.createDate}, #{specialty.changeDate})
+        </foreach>
+    </insert>
+
+    <select id="selectSpecialtiesByNameList" resultMap="specialtyResult" parameterType="java.util.List">
+        select specialtyID, specialtyName, specialtyLevel, specialtyCode, parentCode
+        from psy_specialty
+        where specialtyName in
+        <foreach item="item" index="index" collection="specialtyNames" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>
